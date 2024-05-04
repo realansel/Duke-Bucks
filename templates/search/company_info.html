@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <title>Company info and Transaction</title>
+  <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../static/assets/css/menu.css">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body style="background: url(&quot;../static/assets/img/bg1.webp&quot;)center /cover repeat-y;">
+
+  <div id="menu"
+    style="border-right-style: none;border-right-color: #c3dcf5;border-bottom-style: solid;border-bottom-color: rgb(195,220,245);background: #ffffff;">
+
+
+
+
+    <div class="container" style="background: #ffffff;">
+      <ul class="nav nav-pills nav-fill navbar-light">
+        <li class="nav-item"
+          style="border-radius: 0;border-right-style: solid;border-right-color: #c3dcf5;border-left-style: none;border-left-color: #c3dcf5;">
+          <a id="finance_home" class="nav-link" href="{{ url_for('finance_home') }}"
+            style="font-size: 20px;font-weight: bold;margin-right: -44px;">Finance Home</a></li>
+        <li class="nav-item" style="border-right-style: none;border-right-color: #c3dcf5;"><a id="news"
+            class="nav-link active" style="font-size: 20px;">Transaction</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container" style="padding-top: 20px;background: #ffffff;box-shadow: 3px 3px 10px;margin-top: 20px;">
+    <h2 class="d-inline mb-2"
+      style="font-family: 'Source Sans Pro', sans-serif;font-weight: bold;border-bottom-right-radius: 10px;border-top-right-radius: 10px;padding-left: 20px;padding-right: 8px;padding-bottom: 2px;background: #ffffff;padding-top: 2px;color: var(--bs-link-hover-color);box-shadow: 3px 3px 6px;">
+      Company&nbsp;</h2>
+    <div id="profile" style="margin-top: 10px;margin-bottom: 15px;">
+      <h4> {{ profile['Name']}}({{ profile['Symbol']}})</h4>
+      <h4> {{ profile['Exchange']}}, {{ profile['Sector']}}, {{ profile['Industry']}} </h4>
+      <h4> {{ profile['Description']}} </h4>
+    </div>
+    <h2 class="d-inline mb-2"
+      style="font-family: 'Source Sans Pro', sans-serif;font-weight: bold;border-bottom-right-radius: 10px;border-top-right-radius: 10px;padding-left: 20px;padding-right: 8px;background: #ffffff;color: var(--bs-link-hover-color);box-shadow: 3px 3px 6px;padding-top: 0px;margin-bottom: -13px;margin-top: 2px;padding-bottom: 0px;">
+      Fundamental Info</h2>
+    <div id="basis">
+      <table class="table table-striped" style="font-size: 20px;margin-top: 10px;">
+        <tbody>
+          <tr>
+            <td>Current price:</td>
+            <td> {{ price['current_price'] }} </td>
+            <td>Previous close:</td>
+            <td> {{ price['previous_close'] }}</td>
+          </tr>
+          <tr>
+            <td>Open price:</td>
+            <td> {{ price['open'] }} </td>
+            <td>High price:</td>
+            <td> {{ price['high'] }}</td>
+          </tr>
+          <tr>
+            <td>Low price:</td>
+            <td> {{ price['low'] }} </td>
+            <td>Volume:</td>
+            <td> {{ price['volume'] }}</td>
+          </tr>
+          <tr>
+            <td>Market Capitalization:</td>
+            <td> {{ profile['MarketCapitalization'] }} </td>
+            <td> P/E Ratio:</td>
+            <td> {{ profile['PERatio'] }}</td>
+          </tr>
+          <tr>
+            <td>Dividend per Share:</td>
+            <td> {{ profile['DividendPerShare'] }} </td>
+            <td> Dividend Yield:</td>
+            <td> {{ profile['DividendYield'] }}</td>
+          </tr>
+          <tr>
+            <td>52 Week High:</td>
+            <td> {{ profile['52WeekHigh'] }} </td>
+            <td>52 Week Low:</td>
+            <td> {{ profile['52WeekHigh'] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top: 20px;background: #ffffff;box-shadow: 3px 3px 10px;margin-top: 20px;">
+    <h2 class="d-inline mb-2"
+      style="font-family: 'Source Sans Pro', sans-serif;font-weight: bold;border-bottom-right-radius: 10px;border-top-right-radius: 10px;padding-left: 20px;padding-right: 8px;padding-bottom: 2px;background: #ffffff;padding-top: 2px;color: var(--bs-link-hover-color);box-shadow: 3px 3px 6px;">
+      Make Order</h2>
+    <div class="row">
+      <div class="col col-4 d-flex justify-content-center">
+        <form method="post" action="/company_info/<symbol>" onsubmit="return confirmTrade()">
+          <p> Current Balance: </p><input type="text" id="current_balance" name="current_balance" value="{{balance}}"
+            readonly="">
+          <p> Trade Symbol: </p><input type="text" id="new_symbol_id" name="new_symbol_name"
+            value="{{ profile['Symbol'] }}" readonly="">
+          <p> Trade Type: </p><select id="buy_sell_select" name="buy_sell_select">
+            <option value="" selected=""> Choose Buy or Sell </option>
+            <option value="Buy"> Buy </option>
+            <option value="Sell"> Sell </option>
+          </select>
+          <p> Trade Volume: Current Position is <span id="cur_col">{{cur_vol}}</span></p><input type="text"
+            id="trade_vol" name="trade_vol">
+          <p> Trade Price: </p>
+          <p><input type="text" id="price" name="price" value="{{ price['current_price']}}" readonly=""></p>
+          <div><button type="submit"><strong> Confirm </strong></button></div>
+          <p></p>
+        </form>
+      </div>
+      <div class="col-8">
+        <div class="row">
+          <div style="width: 740px; height: 350px;" id="stock_chart1"></div>
+        </div>
+        <div class="row">
+          <div style="width: 740px; height: 400px;" id="macd_chart"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col col-6">
+        <div style="width: 555px; height: 380px;" id="stock_chart2"></div>
+      </div>
+      <div class="col col-6">
+        <div style="width: 555px; height: 380px;" id="stock_chart3"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col col-6">
+        <div style="width: 555px; height: 380px;" id="stock_chart4"></div>
+      </div>
+      <div class="col col-6">
+        <div style="width: 555px; height: 380px;" id="stock_chart5"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col col-6">
+        <div style="width: 555px; height: 380px;" id="stock_chart6"></div>
+      </div>
+      <div class="col col-6">
+        <div style="width: 555px; height: 380px;" id="stock_chart7"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col col-6">
+        <div style="width: 555px; height: 380px;" id="rsi_chart"></div>
+      </div>
+      <div class="col col-6">
+        <div style="width: 555px; height: 380px;" id="bbands_chart"></div>
+      </div>
+    </div>
+    
+  </div>
+
+
+  <div class="container" style="padding-top: 20px;background: #ffffff;box-shadow: 3px 3px 10px;margin-top: 20px;">
+    <h2 class="d-inline mb-2"
+      style="font-family: 'Source Sans Pro', sans-serif;font-weight: bold;border-bottom-right-radius: 10px;border-top-right-radius: 10px;padding-left: 20px;padding-right: 8px;padding-bottom: 2px;background: #ffffff;padding-top: 2px;color: var(--bs-link-hover-color);box-shadow: 3px 3px 6px;">
+      Latest News</h2>
+    <div class="container">
+      <div id="news">
+        {% if news['news'] %}
+        <hr />
+        <div class="row">
+          {% for article in news.news %}
+          <div class="col-md-7 mb-4">
+            <div class="card h-100"><a href="#"><img class="img-fluid" src="{{ article.banner_image }}" /></a></div>
+          </div>
+          <div class="col-md-5 mb-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <a href="{{ article.url }}" target="_blank" class="card-title">
+                  <h4>{{ article.title }}</h4>
+                </a>
+                <p class="card-text">{{ article.summary }}</p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% else %}
+          <p>No news available for this stock.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../static/assets/bootstrap/js/bootstrap.min.js"></script>
+
+
+  <script> //plot 14.1
+    // Parse the stock_data JSON string passed from Flask
+    const stockData1 = JSON.parse('{{ stock_data | tojson | safe }}');
+
+    // Prepare data for the chart
+    const trace1 = {
+      x: stockData1.map(data => data.date),
+      y: stockData1.map(data => data.close),
+      type: 'scatter',
+      mode: 'lines',
+      name: '{{ symbol }}',
+      line: {
+      width: 1, // Set the width to 1 for a thinner line
+      },
+    };
+
+    // Chart layout settings
+    const layout1 = {
+      title: '{{ symbol }} Prices History:',
+      xaxis: {
+        title: 'Date',
+        showgrid: true,
+        zeroline: true
+      },
+      yaxis: {
+        title: 'Price',
+        showline: true,
+        tickformat: ".2f"
+      },
+    };
+
+    // Render the chart
+    Plotly.newPlot('stock_chart1', [trace1], layout1);
+  </script>
+
+  <script> // plot 14.2
+    const stockData2 = JSON.parse('{{ stock_data | tojson | safe }}');
+
+    let returns = [];
+    let dates = [];
+    for (let i = 1; i < stockData2.length; i++) {
+      let returnVal = (stockData2[i].close - stockData2[i - 1].close) / stockData2[i - 1].close;
+      returns.push(returnVal);
+      dates.push(stockData2[i].date);
+    }
+
+    const trace2 = {
+      x: dates,
+      y: returns,
+      type: 'scatter',
+      mode: 'markers',
+      name: '{{ symbol }}',
+      marker: {
+        size: 3
+      }
+    };
+
+    const layout2 = {
+      title: '{{ symbol }} Daily Simple Return:',
+      xaxis: {
+        title: 'Date',
+        showgrid: true,
+        zeroline: true
+      },
+      yaxis: {
+        title: 'Return',
+        showline: true
+      }
+    };
+
+    Plotly.newPlot('stock_chart2', [trace2], layout2);
+  </script>
+
+  <script> // plot 14.3
+    const stockData3 = JSON.parse('{{ stock_data | tojson | safe }}');
+
+    let returns3 = [];
+    let prevReturns = [];
+    let dates3 = [];
+    for (let i = 2; i < stockData3.length; i++) {
+      let returnVal = (stockData3[i].close - stockData3[i - 1].close) / stockData3[i - 1].close;
+      returns3.push(returnVal);
+      prevReturns.push((stockData3[i - 1].close - stockData3[i - 2].close) / stockData3[i - 2].close);
+      dates3.push(stockData3[i].date);
+    }
+
+    const trace3 = {
+      x: prevReturns,
+      y: returns3,
+      type: 'scatter',
+      mode: 'markers',
+      name: '{{ symbol }}',
+      marker: {
+        size: 3
+      }
+    };
+
+    const layout3 = {
+      title: '{{ symbol }} Daily Simple Return vs Previously Daily Simple Return:',
+      xaxis: {
+        title: 'Simple Return (-1)',
+        showgrid: true,
+        zeroline: true,
+        tickformat: ',.0%',
+      },
+      yaxis: {
+        title: 'Simple Return',
+        showline: true,
+        tickformat: ',.0%',
+      }
+    };
+
+    Plotly.newPlot('stock_chart3', [trace3], layout3);
+  </script>
+
+  <script> // plot 14.4
+    const stockData4 = JSON.parse('{{ stock_data | tojson | safe }}');
+    let returns4 = [];
+    for (let i = 1; i < stockData4.length; i++) {
+      let returnVal = (stockData4[i].close - stockData4[i - 1].close) / stockData4[i - 1].close;
+      returns4.push(returnVal);
+    }
+
+    const trace4 = {
+      x: returns4,
+      type: 'histogram',
+      name: '{{ symbol }}',
+      xbins: {
+        start: -0.1,
+        end: 0.1,
+        size: 0.005
+      },
+      marker: {
+        line: {
+          color: 'white',
+          width: 1
+        }
+      }
+    };
+
+    const layout4 = {
+      title: '{{ symbol }} Histogram of Simple Return:',
+      xaxis: {
+        title: 'Bin',
+        tickformat: ',.0%',
+        showgrid: true,
+        zeroline: true
+      },
+      yaxis: {
+        title: 'Frequency',
+        showline: true
+      }
+    };
+
+    Plotly.newPlot('stock_chart4', [trace4], layout4);
+  </script>
+
+
+  <script> // plot 7.1
+    const stockData5 = JSON.parse('{{ stock_data | tojson | safe }}');
+    const spyData5 = JSON.parse('{{ spy_data | tojson | safe }}');
+
+    const trace51 = {
+      x: stockData5.map(data => data.date),
+      y: stockData5.map((data, i) => data.close / stockData5[0].close),
+      type: 'scatter',
+      mode: 'lines',
+      name: '{{ symbol }}',
+      line: {
+      width: 1, // Set the width to 1 for a thinner line
+      },
+    };
+
+    const trace52 = {
+      x: spyData5.map(data => data.date),
+      y: spyData5.map((data, i) => data.close / spyData5[0].close),
+      type: 'scatter',
+      mode: 'lines',
+      name: 'SPY',
+      line: {
+      width: 1, // Set the width to 1 for a thinner line
+      },
+    };
+
+    const layout5 = {
+      title: '{{ symbol }} and SPY cumulative returns : ',
+      xaxis: {
+        title: 'Date',
+        showgrid: true,
+        zeroline: true
+      },
+      yaxis: {
+        title: 'Relative Price',
+        showline: true
+      }
+    };
+
+    Plotly.newPlot('stock_chart5', [trace51, trace52], layout5);
+
+  </script>
+
+
+  <script> // plot 7.2
+    const stockData6 = JSON.parse('{{ stock_data | tojson | safe }}');
+    const spyData6 = JSON.parse('{{ spy_data | tojson | safe }}');
+
+    let stockReturns = [];
+    let stockDates = [];
+    for (let i = 1; i < stockData6.length; i++) {
+      let returnVal = (stockData6[i].close - stockData6[i - 1].close) / stockData6[i - 1].close;
+      stockReturns.push(returnVal);
+      stockDates.push(stockData6[i].date);
+    }
+
+    let spyReturns = [];
+    let spyDates = [];
+    for (let i = 1; i < spyData6.length; i++) {
+      let returnVal = (spyData6[i].close - spyData6[i - 1].close) / spyData6[i - 1].close;
+      spyReturns.push(returnVal);
+      spyDates.push(spyData6[i].date);
+    }
+
+    const trace61 = {
+      x: stockDates,
+      y: stockReturns,
+      type: 'scatter',
+      mode: 'lines',
+      name: '{{ symbol }}',
+      line: {
+      width: 1, // Set the width to 1 for a thinner line
+      },
+    };
+
+    const trace62 = {
+      x: spyDates,
+      y: spyReturns,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'SPY',
+      line: {
+      width: 1, // Set the width to 1 for a thinner line
+      },
+    };
+
+    const layout6 = {
+      title: '{{ symbol }} and SPY Daily Percentage Change in Price:',
+      xaxis: {
+        title: 'Date',
+        showgrid: true,
+        zeroline: true
+      },
+      yaxis: {
+        title: 'Daily Returns',
+        showline: true,
+        tickformat: ',.0%',
+      }
+    };
+
+    Plotly.newPlot('stock_chart6', [trace61, trace62], layout6);
+
+  </script>
+
+
+  <script> // plot 7.3
+    // Parse the stock_data and spy_data JSON strings passed from Flask
+    const stockData7 = JSON.parse('{{ stock_data | tojson | safe }}');
+    const spyData = JSON.parse('{{ spy_data | tojson | safe }}');
+
+    // Calculate daily returns for stock and SPY
+    let stockReturns7 = [];
+    let spyReturns7 = [];
+    for (let i = 1; i < stockData7.length; i++) {
+      let stockReturnVal = stockData7[i].close / stockData7[i - 1].close - 1;
+      let spyReturnVal = spyData[i].close / spyData[i - 1].close - 1;
+      stockReturns7.push(stockReturnVal);
+      spyReturns7.push(spyReturnVal);
+    }
+
+    // Calculate regression line
+    let regression = linearRegression(spyReturns7, stockReturns7);
+    let regressionLine = {
+      x: spyReturns7,
+      y: spyReturns7.map(x => x * regression.slope + regression.intercept),
+      type: 'scatter',
+      mode: 'lines',
+      name: `y = ${regression.slope.toFixed(4)}x + ${regression.intercept.toFixed(4)}`,
+    };
+
+    // Create scatter plot of stock return vs. SPY return
+    const trace7 = {
+      x: spyReturns7,
+      y: stockReturns7,
+      type: 'scatter',
+      mode: 'markers',
+      name: 'Returns',
+      marker: {
+        size: 3
+      }
+    };
+
+    // Chart layout settings
+    const layout7 = {
+      title: 'Stock Returns vs. SPY Returns',
+      xaxis: {
+        title: 'SPY Return',
+        showgrid: true,
+        zeroline: true
+      },
+      yaxis: {
+        title: 'Stock Return',
+        showline: true
+      }
+    };
+
+    // Render the chart
+    Plotly.newPlot('stock_chart7', [trace7, regressionLine], layout7);
+
+    // Linear regression function
+    function linearRegression(x, y) {
+      let n = x.length;
+      let sumX = x.reduce((a, b) => a + b, 0);
+      let sumY = y.reduce((a, b) => a + b, 0);
+      let sumXY = x.map((xi, i) => xi * y[i]).reduce((a, b) => a + b, 0);
+      let sumXsq = x.map(xi => xi * xi).reduce((a, b) => a + b, 0);
+      let slope = (n * sumXY - sumX * sumY) / (n * sumXsq - sumX * sumX);
+      let intercept = (sumY - slope * sumX) / n;
+      return { slope, intercept };
+    }
+  </script>
+
+
+  <script> // rsi-plot
+    // Parse the stock_data JSON string passed from Flask
+    const stockData8 = JSON.parse('{{ stock_data | tojson | safe }}');
+
+    // Prepare data for the RSI chart
+    let rsiValues = [];
+    let dates8 = [];
+
+    // Set the RSI period to 14 days
+    let rsiPeriod = 14;
+
+    for (let i = rsiPeriod; i < stockData8.length; i++) {
+      let avgGain = 0;
+      let avgLoss = 0;
+
+      for (let j = i - rsiPeriod + 1; j <= i; j++) {
+        let change = stockData8[j].close - stockData8[j - 1].close;
+        if (change > 0) {
+          avgGain += change;
+        } else {
+          avgLoss -= change;
+        }
+      }
+
+      avgGain /= rsiPeriod;
+      avgLoss /= rsiPeriod;
+
+      let relativeStrength = avgGain / avgLoss;
+      let rsi = 100 - (100 / (1 + relativeStrength));
+
+      rsiValues.push(rsi);
+      dates8.push(stockData8[i].date);
+    }
+
+    const trace8 = {
+      x: dates8,
+      y: rsiValues,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'RSI',
+      line: {
+      width: 1, // Set the width to 1 for a thinner line
+      },
+    };
+
+    // Add lines at overbought and oversold levels
+    const overbought = {
+      x: dates8,
+      y: Array(dates8.length).fill(70),
+      type: 'scatter',
+      mode: 'lines',
+      name: 'Overbought',
+      line: { color: 'red', dash: 'dash' },
+    };
+
+    const oversold = {
+      x: dates8,
+      y: Array(dates8.length).fill(30),
+      type: 'scatter',
+      mode: 'lines',
+      name: 'Oversold',
+      line: { color: 'green', dash: 'dash' },
+    };
+
+    // Chart layout settings
+    const layout8 = {
+      title: '{{ symbol }} Relative Strength Index (RSI):',
+      xaxis: {
+        title: 'Date',
+        showgrid: true,
+        zeroline: true,
+      },
+      yaxis: {
+        title: 'RSI',
+        showline: true,
+        range: [0, 100],
+      },
+    };
+
+    // Render the chart
+    Plotly.newPlot('rsi_chart', [trace8, overbought, oversold], layout8);
+  </script>
+
+
+  <script> // macd-plot
+    // Parse the stock_data JSON string passed from Flask
+    const stockData9 = JSON.parse('{{ stock_data | tojson | safe }}');
+
+    // Calculate the MACD values
+    const ema12 = [];
+    const ema26 = [];
+    const macdLine = [];
+    const signalLine = [];
+    const histogram = [];
+
+    for (let i = 0; i < stockData9.length; i++) {
+      const close = stockData9[i].close;
+
+      // Calculate the EMA12 and EMA26
+      if (i === 0) {
+        ema12.push(close);
+        ema26.push(close);
+      } else {
+        ema12.push((2 / 13) * close + (11 / 13) * ema12[i - 1]);
+        ema26.push((2 / 27) * close + (25 / 27) * ema26[i - 1]);
+      }
+
+      // Calculate the MACD line
+      macdLine.push(ema12[i] - ema26[i]);
+
+      // Calculate the signal line
+      if (i === 0) {
+        signalLine.push(macdLine[i]);
+      } else {
+        signalLine.push((8 / 10) * signalLine[i - 1] + (2 / 10) * macdLine[i]);
+      }
+
+      // Calculate the histogram
+      histogram.push(macdLine[i] - signalLine[i]);
+    }
+
+    // Create the traces for the chart
+    const macdTrace = {
+      x: stockData9.map(data => data.date),
+      y: macdLine,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'MACD Line',
+      line: {
+      width: 1, // Set the width to 1 for a thinner line
+      },
+    };
+
+    const signalTrace = {
+      x: stockData9.map(data => data.date),
+      y: signalLine,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'Signal Line',
+      line: {
+      width: 1, // Set the width to 1 for a thinner line
+      },
+    };
+
+    const histogramTrace = {
+      x: stockData9.map(data => data.date),
+      y: histogram,
+      type: 'bar',
+      name: 'Histogram'
+    };
+
+    // Define the layout for the chart
+    const layout9 = {
+      title: '{{ symbol }} MACD Chart:',
+      xaxis: {
+        title: 'Date',
+        showgrid: true,
+        zeroline: true
+      },
+      yaxis: {
+        title: 'MACD',
+        showline: true
+      },
+      barmode: 'overlay'
+    };
+
+    // Render the chart
+    Plotly.newPlot('macd_chart', [macdTrace, signalTrace, histogramTrace], layout9);
+  </script>
+
+
+  <script> // bollinger-plot
+    const stockData = JSON.parse('{{ stock_data | tojson | safe }}');
+
+    const closePrices = stockData.map(data => data.close);
+    const sma20 = calculateSMA(closePrices, 20);
+    const std20 = calculateSTD(closePrices, 20);
+
+    const upperBand = sma20.map((sma, i) => sma + 2 * std20[i]);
+    const lowerBand = sma20.map((sma, i) => sma - 2 * std20[i]);
+
+    const trace = {
+      x: stockData.map(data => data.date),
+      y: closePrices,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'Close Price',
+      line: {
+      width: 1, // Set the width to 1 for a thinner line
+      },
+    };
+
+    const traceUpper = {
+      x: stockData.map(data => data.date),
+      y: upperBand,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'Upper Band',
+      line: {
+      width: 1, // Set the width to 1 for a thinner line
+      },
+    };
+
+    const traceLower = {
+      x: stockData.map(data => data.date),
+      y: lowerBand,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'Lower Band',
+      line: {
+      width: 1, // Set the width to 1 for a thinner line
+      },
+    };
+
+    const traceSMA = {
+      x: stockData.map(data => data.date),
+      y: sma20,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'SMA (20)',
+      line: {
+      width: 1, // Set the width to 1 for a thinner line
+      },
+    };
+
+    const layout = {
+      title: '{{ symbol }} Bollinger Bands:',
+      xaxis: {
+        title: 'Date',
+        showgrid: true,
+        zeroline: true
+      },
+      yaxis: {
+        title: 'Price',
+        showline: true
+      }
+    };
+
+    Plotly.newPlot('bbands_chart', [trace, traceUpper, traceLower, traceSMA], layout);
+
+    function calculateSMA(prices, period) {
+      const smaArray = [];
+      for (let i = 1; i < prices.length; i++) {
+        if (i < period - 1) {
+          smaArray.push(null);
+        } else {
+          const slice = prices.slice(i - period + 1, i + 1);
+          const sma = slice.reduce((acc, val) => acc + val) / period;
+          smaArray.push(sma);
+        }
+      }
+      return smaArray;
+    }
+
+    function calculateSTD(prices, period) {
+      const stdArray = [];
+      for (let i = 0; i < prices.length; i++) {
+        if (i < period - 1) {
+          stdArray.push(null);
+        } else {
+          const slice = prices.slice(i - period + 1, i + 1);
+          const mean = slice.reduce((acc, val) => acc + val) / period;
+          const variance = slice.reduce((acc, val) => acc + Math.pow(val - mean, 2)) / period;
+          const std = Math.sqrt(variance);
+          stdArray.push(std);
+        }
+      }
+      return stdArray;
+    }
+  </script>
+
+
+  <script>
+    function confirmTrade() {
+      var current_balance = parseFloat(document.querySelector("#current_balance").value);
+      var tradeSymbol = document.querySelector("#new_symbol_id").value;
+
+      var tradeType = document.querySelector("#buy_sell_select").value;
+      var tradeVolume = parseFloat(document.querySelector("#trade_vol").value);
+      var tradePrice = parseFloat(document.querySelector("#price").value);
+      var cur_volSpan = document.getElementById('cur_col');
+      var cur_vol = parseFloat(cur_volSpan.textContent);
+      if (tradeVolume <= 0 || isNaN(tradeVolume) || tradeType === "") {
+        alert("Please enter a valid trade volume and select a trade type.");
+        return false;
+      }
+      if (tradeType == "Sell") {
+        if (cur_vol < tradeVolume) {
+          alert("You do not have enough position.")
+          return false;
+        }
+      }
+      var post_trade_balance;
+      if (tradeType === "Buy") {
+        post_trade_balance = current_balance - (tradeVolume * tradePrice);
+        if (post_trade_balance < 0) {
+          alert("You do not have enough funds to complete this trade.");
+          return false;
+        }
+      } else if (tradeType === "Sell") {
+        post_trade_balance = current_balance + (tradeVolume * tradePrice);
+      } else {
+        alert("Please select a valid trade type.");
+        return false;
+      }
+      var message = "Current Balance: " + current_balance.toFixed(2) + "\n" +
+        "Trade Symbol: " + tradeSymbol + "\n" +
+        "Trade Type: " + tradeType + "\n" +
+        "Trade Volume: " + tradeVolume.toFixed(2) + "\n" +
+        "Trade Price: " + tradePrice.toFixed(2) + "\n" +
+        "Post-trade Balance: " + post_trade_balance.toFixed(2) + "\n" +
+        "Are you sure you want to confirm the trade?";
+      return confirm(message);
+    }
+
+  </script>
+
+</body>
+
+</html>

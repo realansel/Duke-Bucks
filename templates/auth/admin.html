@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Admin</title>
+    <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/assets/css/ok-header.css">
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl7/1L_dstPt3HV5HzF6Gvk/e3M_bbiExDidgshw5/5" crossorigin="anonymous">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body style="background: url(&quot;../static/assets/img/bg3.jpg&quot;)top /cover repeat-y;">
+    <div style="background: #c6e4fa;">
+        <div class="container d-flex justify-content-center align-items-center" style="height: 100px;">
+            <div class="row align-items-center">
+                <div class="col-3 d-flex justify-content-center"><img src="../static/assets/img/Buck_logo.png" width="226" height="68"></div>
+                <div class="col-7">
+                    <p style="text-align: center;font-weight: bold;color: var(--bs-link-color);font-size: 30px;">ADMIN MODE</p>
+                </div>
+                <div class="col-2">
+                    <p> Welcome,{{username}},<a href="{{ url_for('logout') }}">Sign_Out</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="background: #ffffff;box-shadow: 3px 3px 10px;padding-top: 20px;margin-top:10px;"><h2 class="d-inline mb-2" style="font-family: 'Source Sans Pro', sans-serif;font-weight: bold;border-bottom-right-radius: 10px;border-top-right-radius: 10px;padding-left: 20px;padding-right: 8px;padding-bottom: 2px;background: #ffffff;padding-top: 2px;color: var(--bs-link-hover-color);box-shadow: 3px 3px 6px;">Current Day&#39;s Orders</h2>
+   <div class="orders_summary" style="margin-top: 10px;">
+
+        <table  id="example1" class="table table-striped table-bordered" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Name</th>
+                    <th>Shares Bought</th>
+                    <th>Shares Sold</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order[0] }}</td>
+                    <td>{{ order[1] }}</td>
+                    <td>{{ order[2] }}</td>
+                    <td>{{ order[3] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div></div>
+    <div class="container" style="background: #ffffff;margin-top:10px;box-shadow: 3px 3px 10px;padding-top: 20px;"><h2 class="d-inline mb-2" style="font-family: 'Source Sans Pro', sans-serif;font-weight: bold;border-bottom-right-radius: 10px;border-top-right-radius: 10px;padding-left: 20px;padding-right: 8px;padding-bottom: 2px;background: #ffffff;padding-top: 2px;color: var(--bs-link-hover-color);box-shadow: 3px 3px 6px;">Customers</h2>
+   <div class="users_portfolio" style ="margin-top: 10px;">
+        <ul>
+            {% for user in user_holdings %}
+            {% if not user.is_admin %}
+            <li>
+                <a href="#" class="user-link" data-email="{{ user.email }}">{{ user.email }}</a>
+                <div class="user-holdings" style="display: none;">
+                    <table class="table table-striped table-bordered" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Name</th>
+                                <th>Shares Held</th>
+                                <th>Price/Share</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for holding in user.holdings %}
+                            <tr>
+                                <td>{{ holding[0] }}</td>
+                                <td>{{ holding[3] }}</td>
+                                <td>{{ holding[1] }}</td>
+                                <td>{{ holding[2] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+    </div></div>
+    <div class="container" style="background: #ffffff;margin-top:10px;box-shadow: 3px 3px 10px;padding-top: 20px;"><h2 class="d-inline mb-2" style="font-family: 'Source Sans Pro', sans-serif;font-weight: bold;border-bottom-right-radius: 10px;border-top-right-radius: 10px;padding-left: 20px;padding-right: 8px;padding-bottom: 2px;background: #ffffff;padding-top: 2px;color: var(--bs-link-hover-color);box-shadow: 3px 3px 6px;">Analysis</h2>
+    <div class="risk_analysis d-flex justify-content-center">
+        {% if statistics.sharpe_ratio is defined %}
+        <h3 style="margin-top:20px;">Sharpe ratio: {{ statistics.sharpe_ratio }}</h3>
+	  <div>
+        {{ statistics.make_plot | safe}} 
+	  </div>
+        {% elif statistics.error is defined %}
+        <div class="alert alert-warning" role="alert">
+            {{ statistics.error }}
+        </div>
+        {% endif %}
+    </div></div>
+    <script src="../static/assets/bootstrap/js/bootstrap.min.js"></script>
+ <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#example1').DataTable();
+
+        } );
+    </script>
+
+
+
+
+   <script>
+        // Add event listeners to user links for toggling the user holdings
+        document.querySelectorAll(".user-link").forEach(function (link) {
+            link.addEventListener("click", function (event) {
+                event.preventDefault();
+                var holdings = link.nextElementSibling;
+                holdings.style.display = holdings.style.display === "none" ? "block" : "none";
+            });
+        });
+    </script>
+    <!-- Include Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+        integrity="sha384-oBqDVmMz4fnFO9gybBud6/1l5odXmzTr2U6vY2eA2Qk2elpDz8/7n26XG6pTJkz"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"
+        integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

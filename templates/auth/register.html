@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Sign up</title>
+    <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/assets/css/register-2.css">
+</head>
+
+<body>
+    <div id="main" style="background: url(&quot;../static/assets/img/duke1.jpg&quot;);background-size: cover;">
+        <div class="container" id="main-wrapper">
+            <div class="row justify-content-center" style="margin-top: 80px;background: var(--bs-card-cap-bg);opacity: 1;color: var(--bs-card-cap-bg);">
+                <div class="col-xl-10">
+                    <div class="card border-0">
+                        <div class="card-body p-0">
+                            <div class="row no-gutters">
+                                <div class="col-lg-6">
+                                    <div class="p-5">
+                                        <div class="mb-5">
+                                            <h3 class="h2 font-weight-bold text-theme"><strong>Register</strong></h3>
+                                        </div>
+                                        <h6 class="h3"><strong>Three Steps to Make Money</strong></h6>
+                                        <p class="text-muted mt-2 mb-5"><strong>1) Sign up your account by email</strong><br><strong>2) Make your portfolio</strong><br><strong>3) EARN your MONEY</strong></p>
+                                        <form  method="post">
+                                            <div class="form-group"><label class="form-label form-label" for="username">Username</label><input class="form-control form-control form-control" type="text" id="username" name="username"></div>
+                                            <div class="form-group"><label class="form-label form-label" for="email"> Email</label><input class="form-control form-control form-control" type="text" id="email" name="email"></div>
+                                            <div class="form-group mb-5"><label class="form-label form-label" for="password">Password</label><input class="form-control form-control form-control" type="password" id="password" name="password"></div>
+
+ <div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-success">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+    <script>
+      setTimeout(function() {
+        window.location.href = "{{ url_for('login') }}";
+      }, 3000);
+    </script>
+    {% endif %}
+    {% endwith %}
+  </div>
+
+  <div>
+    <p style="color:red;">
+      {% if err_msg %}
+      {{ err_msg}}
+      {% endif %}
+    </p>
+  </div>
+
+
+
+
+<button class="btn btn-theme" type="submit">Register</button>
+                                            <p class="text-center mt-3 mb-0">Already have an account? <a class="text-primary ml-1" href="{{ url_for('login') }}">login</a></p>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 d-none d-lg-inline-block">
+                                    <div class="account-block rounded-right" style="background: url(&quot;../static/assets/img/signuppic.jpg&quot;) center / cover;">
+                                        <div class="overlay rounded-right"></div>
+                                        <div class="account-testimonial">
+                                            <h4 class="text-white"><strong>Make Fortune On Your Own</strong></h4>
+                                            <p class="lead text-white">How much wealth you can accumulate in a lifetime does not depend on how much money you can earn, but on how you invest your money, money to find people is better than people looking for money, to know that money works for you, not you work for money</p>
+                                            <p style="color: var(--bs-card-bg);">- Warren Edward Buffett</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../static/assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>

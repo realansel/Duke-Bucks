@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no,user-scalable=no">
+    <title>Finance_home</title>
+    <link rel="stylesheet" href="../static/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,900">
+    <link rel="stylesheet" href="../static/assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/assets/css/search.css">
+    <link rel="stylesheet" href="../static/assets/css/menu-1.css">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body style="background: url(&quot;../static/assets/img/bg2.jpg&quot;)center /auto repeat-y;">
+    <div style="background: #c6e4fa;">
+        <div class="container d-flex justify-content-center align-items-center" style="height: 100px;">
+            <div class="row align-items-center">
+                <div class="col-3 d-flex justify-content-center"><img src="../static/assets/img/Buck_logo.png" width="226" height="68"></div>
+                <div class="col-7">
+                    <form id='search-form' method="post">
+                        <div class="input-group"><span class="input-group-text input-group-text"><i class="fa fa-search"></i></span><input class="form-control form-control" type="text" id="search_content" name="search_content" placeholder="Please input company symbol">
+                       <button class="btn btn-light" type="submit">Search </button></div>
+                    </form>
+                
+                </div>
+                <div class="col-2">
+                    <p> Welcome,{{username}},<a href="{{ url_for('logout') }}">Sign_Out</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+     <div id="alert-container"></div>
+    
+<div id="menu" style="background: #ffffff;border-right-style: none;border-right-color: #c3dcf5;border-bottom-style: solid;border-bottom-color: rgb(195,220,245);">
+    <div class="container" ;>
+        <ul class="nav nav-pills nav-fill navbar-light">
+            <li class="nav-item" style="border-radius: 0;border-right-style: solid;border-right-color: #c3dcf5;border-left-style: none;border-left-color: #c3dcf5;"><a id="finance_home" class="nav-link active" href="{{ url_for('finance_home') }}" style="font-size: 20px;font-weight: bold;margin-right: -44px;">Finance Home</a></li>
+            <li class="nav-item" onclick="showDialog()"  style="border-radius: 0;border-right-style: solid;border-right-color: #c3dcf5;border-left-style: none;border-left-color: #c3dcf5;"><a id="finance_home" class="nav-link " style="font-size: 20px;font-weight: bold;margin-right: -44px;">Transaction</a></li>
+        </ul>
+    </div>
+</div>
+
+
+
+    <div class="container" style="margin-top: 20px;box-shadow: 3px 3px 10px;height:700px;background: #ffffff;">
+        <div class="d-flex flex-column justify-content-between" style="padding-bottom: 20px;height: 290px;">
+            <div>
+                <h2 class="d-inline mb-2" style="font-family: 'Source Sans Pro', sans-serif;font-weight: bold;border-bottom-right-radius: 10px;border-top-right-radius: 10px;padding-left: 20px;padding-right: 8px;padding-bottom: 2px;background: #ffffff;padding-top: 2px;color: var(--bs-link-hover-color);box-shadow: 3px 3px 6px;">My Portfolio</h2>
+                <div class="row d-flex justify-content-center" style="padding-top: 10px;margin-top: 6px;">
+                    <div class="col-6">
+                        <p class="h5" style="text-align: center;"><strong> Portfolio Value :</strong><span id="portfolio-value">{{portfolio_value}}</span></p>
+                    </div>
+                    <div class="col-6">
+                        <p class="h5" style="text-align: center;"><strong> Total Revenue :</strong><span id="total-revenue">{{total_revenue}}</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 0px;padding-bottom: 0px;">
+                <div class="col -8"><div>
+ <table id="example1" class="table table-striped table-bordered" style="width: 100%;">
+
+         <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th>Shares held</th>
+                <th>Current Price</th>
+                <th>Price per share</th>
+                <th>Revenue</th>
+            </tr>
+        </thead>
+          <tbody>
+          {% for symbol in portfolio %}
+            {% if portfolio[symbol]['total_volume'] != 0 %}
+                <tr>
+                   <td><a href = "{{ url_for('company_info', symbol=symbol)}}">{{ symbol }}</a></td>
+                    <td>{{ portfolio[symbol]['name'] }}</td>
+                    <td>{{ portfolio[symbol]['total_volume'] }}</td>
+                    <td class="current-price">{{ portfolio[symbol]['current_price'] }}</td>
+                    <td>
+                        <span class="display-price-per-share">{{ portfolio[symbol]['average_cost_price']|round(2) }}</span>
+                        <span class="hidden-price-per-share" style="display:none;">{{ portfolio[symbol]['average_cost_price'] }}</span>
+                    </td>
+                    
+                    
+                    <td>{{ portfolio[symbol]['revenue'] }}</td>
+                </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+     </table>
+
+
+
+
+
+
+
+</div></div>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-top: 20px;box-shadow: 3px 3px 10px;height:600px;background: #ffffff;">
+        <div class="row">
+            <div class="col">
+                <div class="d-flex flex-column justify-content-between" style="padding-bottom: 20px;height: 290px;">
+			 <div style="width:400px;">
+                    <h2 class="d-inline mb-2" style="font-family: 'Source Sans Pro', sans-serif;font-weight: bold;border-bottom-right-radius: 10px;border-top-right-radius: 10px;padding-left: 20px;padding-right: 8px;padding-bottom: 2px;background: #ffffff;padding-top: 2px;color: var(--bs-link-hover-color);box-shadow: 3px 3px 6px;">Efficient Frontier</h2></div>
+                     <div class="risk_analysis">
+      	{% if statistics.sharpe_ratio is defined %}
+		<div style="margin-top:10px;margin-left:10px;margin-bottom: -10px;">
+      	<h4>Sharpe Ratio: {{ statistics.sharpe_ratio }}</h4></div>
+		<div class="d-flex justify-content-center">
+      	{{ statistics.make_plot | safe}} 
+		</div>
+      	{% elif statistics.error is defined %}
+      	<div class="alert alert-warning" role="alert">
+          	{{ statistics.error }}
+      	</div>
+      	{% endif %}
+    				</div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+
+<div class="container" style="margin-top: 20px;box-shadow: 3px 3px 10px;height:600px;background: #ffffff;">
+        <div class="row ">
+             <div class="col">
+                <div class="d-flex flex-column justify-content-between" style="padding-bottom: 20px;height: 290px;">
+			<div style="width:350px;" >
+                   <h2 class="d-inline mb-2" style="font-family: 'Source Sans Pro', sans-serif;font-weight: bold;border-bottom-right-radius: 10px;border-top-right-radius: 10px;padding-left: 20px;padding-right: 8px;padding-bottom: 2px;background: #ffffff;padding-top: 2px;color: var(--bs-link-hover-color);box-shadow: 3px 3px 6px;">S&amp;P 500</h2></div>
+                    <div class="d-flex justify-content-center" id="stock-chart"></div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <div class="container" style="margin-top: 20px;box-shadow: 3px 3px 10px;height:700px;background: #ffffff;">
+        <div class="d-flex flex-column justify-content-between" style="padding-bottom: 20px;height: 290px;">
+            <div>
+                <h2 class="d-inline mb-2" style="font-family: 'Source Sans Pro', sans-serif;font-weight: bold;border-bottom-right-radius: 10px;border-top-right-radius: 10px;padding-left: 20px;padding-right: 8px;padding-bottom: 2px;background: #ffffff;padding-top: 2px;color: var(--bs-link-hover-color);box-shadow: 3px 3px 6px;">Trade History</h2><div> 
+        <table id="example2" class="table table-striped table-bordered" style="width: 100%;">
+         <thead>
+            <tr>
+                <th>Settlement Date</th>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th>Trade Type</th>
+                <th>Price per share</th>
+                <th>Volume</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+          <tbody>
+          {% for row in datas %}
+                <tr>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] | round(2) }}</td>
+                    <td>{{ row[5] }}</td>
+                    <td>{{ row[6] }}</td>
+                </tr>
+          {% endfor %}
+        </tbody>
+     </table></div>
+            </div>
+        </div>
+    </div>
+    <script src="../static/assets/bootstrap/js/bootstrap.min.js"></script>
+ <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#example1').DataTable();
+            $('#example2').DataTable();
+        } );
+    </script>
+
+<script>
+  // Parse the stock_data JSON string passed from Flask
+  const stockData = JSON.parse('{{ stock_data | tojson | safe }}');
+
+  // Prepare data for the chart
+  const trace = {
+      x: stockData.map(data => data.date),
+      y: stockData.map(data => data.close),
+      type: 'scatter',
+      mode: 'lines',
+      name: '{{ symbol }}',
+  };
+
+  // Chart layout settings
+  const layout = {
+      title: '{{ symbol }} Prices History : ',
+      xaxis: {
+          title: 'Date',
+          showgrid: true,
+          zeroline: true
+      },
+      yaxis: {
+          title: 'Price',
+          showline: true,
+          tickformat: ".2f"
+      },
+      width: 800
+  };
+
+  // Render the chart
+  Plotly.newPlot('stock-chart', [trace], layout);
+</script>
+<script>
+    function submitForm(event) {
+      event.preventDefault();
+      const form = document.getElementById('search-form');
+      const formData = new FormData(form);
+  
+      fetch('/finance_home', {
+        method: 'POST',
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            window.location.href = `/company_info/${data.symbol}`;
+          } else {
+            showInvalidSymbolAlert();
+          }
+        });
+    }
+  
+    function showInvalidSymbolAlert() {
+      alert("Invalid Symbol, please try again");
+    }
+  
+    // Attach the submitForm function to the form's submit event
+    $('#search-form').on('submit', submitForm);
+</script>
+
+<script>
+$(document).ready(function() {
+    formatPricePerShare();
+    update_stock_prices();
+    setInterval(update_stock_prices, 5000);
+});
+
+function formatPricePerShare() {
+    $('table#example1 tbody tr').each(function() {
+        var row = $(this);
+        var pricePerShareCell = row.find('td.price-per-share-display');
+        var pricePerShare = parseFloat(pricePerShareCell.find('.hidden-price-per-share').text());
+        pricePerShareCell.text(pricePerShare.toFixed(2));
+    });
+}
+
+
+function update_portfolio_value() {
+    var portfolioValue = parseFloat("{{balance}}");
+    $('table#example1 tbody tr').each(function () {
+        var row = $(this);
+        var volume = parseFloat(row.find('td:eq(2)').text());
+        var currentPrice = parseFloat(row.find('td.current-price').text().split(' ')[0]);
+        portfolioValue += volume * currentPrice;
+    });
+    $('#portfolio-value').text(portfolioValue.toFixed(2));
+    return portfolioValue;
+}
+
+function update_stock_prices() {
+    var totalRevenue = 0;
+    var requests = [];
+
+    $('table#example1 tbody tr').each(function () {
+        var row = $(this);
+        var symbol = row.find('td:first').text();
+
+        var request = $.get('/api/get_stock_price', {symbol: symbol}, function (data) {
+            if (data.success) {
+                var currentPriceCell = row.find('td.current-price');
+                var openPrice = parseFloat(data.open_price);
+                var newPrice = parseFloat(data.current_price);
+                var priceChangePercentage = ((newPrice - openPrice) / openPrice) * 100;
+
+                if (newPrice > openPrice) {
+                    currentPriceCell.css('color', 'green');
+                    currentPriceCell.html(`${newPrice.toFixed(2)} <span style="color: green;">(&uarr; ${Math.abs(priceChangePercentage).toFixed(2)}%)</span>`);
+                } else if (newPrice < openPrice) {
+                    currentPriceCell.css('color', 'red');
+                    currentPriceCell.html(`${newPrice.toFixed(2)} <span style="color: red;">(&darr; ${Math.abs(priceChangePercentage).toFixed(2)}%)</span>`);
+                } else {
+                    currentPriceCell.css('color', '');
+                    currentPriceCell.text(`${newPrice.toFixed(2)} (${priceChangePercentage.toFixed(2)}%)`);
+                }
+                var volume = parseFloat(row.find('td:eq(2)').text());
+                var originalPricePerShare = parseFloat(row.find('.hidden-price-per-share').text());
+                var totalValue = originalPricePerShare * volume;
+                var revenue = newPrice * volume - totalValue;
+                totalRevenue += revenue;
+
+                var revenueCell = row.find('td:last');
+                  if (revenue > 0) {
+                      revenueCell.css('color', 'green');
+                      revenueCell.html(`${revenue.toFixed(2)} <span style="color: green;"</span>`);
+                  } else if (revenue < 0) {
+                      revenueCell.css('color', 'red');
+                      revenueCell.html(`${revenue.toFixed(2)} <span style="color: red;"</span>`);
+                  } else {
+                      revenueCell.css('color', '');
+                      revenueCell.text(revenue.toFixed(2));
+                  }
+            }
+        });
+
+        requests.push(request);
+    });
+
+
+    $.when.apply($, requests).then(function () {
+    var updatedPortfolioValue = update_portfolio_value();
+    var revenuePercentage = (totalRevenue / (updatedPortfolioValue - totalRevenue)) * 100;
+    var totalRevenueText = `Total Revenue : `;
+
+    var totalRevenueElement = $("p:contains('Total Revenue')");
+    totalRevenueElement.html(totalRevenueText);
+
+    var revenueNumberText = `${totalRevenue.toFixed(2)} (${revenuePercentage.toFixed(2)}%)`;
+    var revenueNumberSpan = $('<span>');
+    revenueNumberSpan.text(revenueNumberText);
+
+    if (totalRevenue > 0) {
+        revenueNumberSpan.css('color', 'green');
+    } else if (totalRevenue < 0) {
+        revenueNumberSpan.css('color', 'red');
+    } else {
+        revenueNumberSpan.css('color', '');
+    }
+
+    totalRevenueElement.append(revenueNumberSpan);
+});
+}
+
+function showDialog() {
+  alert("Please Enter the COMPANY SYMBOL in the SEARCH field");
+}
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>

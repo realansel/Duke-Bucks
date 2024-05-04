@@ -1,0 +1,7 @@
+DateTime
+numpy
+pandas
+plotly
+requests
+yfinance
+Flask

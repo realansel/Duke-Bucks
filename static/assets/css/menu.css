@@ -1,0 +1,157 @@
+.nav-pills > li {
+  float: left;
+}
+
+.nav-pills > li > a {
+  border-radius: 4px;
+}
+
+.nav-pills > li + li {
+  margin-left: 2px;
+}
+
+a {
+  background-color: transparent;
+}
+
+a:active, a:hover {
+  outline: 0;
+}
+
+a {
+  color: #3097D1;
+  text-decoration: none;
+}
+
+a:focus, a:hover {
+  color: #216a94;
+  text-decoration: underline;
+}
+
+a:focus {
+  outline: -webkit-focus-ring-color auto 5px;
+  outline-offset: -2px;
+}
+
+dl, ol, ul {
+  margin-top: 0;
+}
+
+ol, ul {
+  margin-bottom: 11px;
+}
+
+.nav {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.nav:after, .nav:before {
+  content: " ";
+  display: table;
+}
+
+.nav > li, .nav > li > a {
+  display: block;
+  position: relative;
+}
+
+.nav:after {
+  clear: both;
+}
+
+.nav > li > a {
+  padding: 10px 15px;
+}
+
+.nav > li > a:focus, .nav > li > a:hover {
+  text-decoration: none;
+  background-color: #eee;
+}
+
+* {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* 表单样式 */
+
+form {
+  background-color: #fff;
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 输入框样式 */
+
+input[type="text"], select {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+/* 按钮样式 */
+
+button[type="submit"] {
+  background-color: #1500ff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* 标题样式 */
+
+p {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+/* 禁用输入框样式 */
+
+input[readonly] {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+/* 当前持仓量样式 */
+
+#cur_col {
+  font-weight: bold;
+}
+
+/* 成功和失败消息样式 */
+
+.success {
+  background-color: #cfc;
+  color: #090;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.error {
+  background-color: #fcc;
+  color: #900;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+button[type="submit"]:hover {
+  background-color: #1b0089;
+}
+
